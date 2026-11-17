@@ -89,10 +89,9 @@ views:
             template: studio_nav
             name: Overview
             icon: mdi:chart-donut-variant
-            state:
-              - value: 'on'
-                styles:
-                  card: [background: 'linear-gradient(90deg, rgba(44, 214, 184, .20), rgba(44, 214, 184, .03))']
+            styles:
+              card: [background: 'linear-gradient(90deg, rgba(44, 214, 184, .20), rgba(44, 214, 184, .03))', color: '#eafcf9']
+              icon: [color: '#2cd6b8']
           - type: custom:button-card
             template: studio_nav
             name: Pump control
@@ -193,7 +192,11 @@ views:
                 entity: button.sicce_pump_refresh
                 name: Refresh
                 icon: mdi:refresh
-                tap_action: { action: perform-action, perform_action: button.press, target: { entity_id: button.sicce_pump_refresh } }
+                tap_action:
+                  action: call-service
+                  service: button.press
+                  service_data:
+                    entity_id: button.sicce_pump_refresh
           - type: custom:mushroom-number-card
             entity: number.sicce_pump_pump_speed
             name: Pump speed
