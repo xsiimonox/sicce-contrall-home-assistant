@@ -78,10 +78,13 @@ views:
         cards:
           - type: markdown
             content: |
-              <div style="padding: 14px 10px 20px">
-                <div style="color:#2cd6b8;font-size:11px;font-weight:800;letter-spacing:2px">SICCE</div>
-                <div style="color:#f1f7ff;font-size:25px;font-weight:800;letter-spacing:-.7px">Studio</div>
-                <div style="color:#8fa3c0;font-size:12px;margin-top:4px">Water movement control</div>
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 10px 20px">
+                <img src="https://raw.githubusercontent.com/xsiimonox/sicce-contrall-home-assistant/main/logo.png" width="46" height="46" alt="Sicce Studio" />
+                <div>
+                  <div style="color:#2cd6b8;font-size:11px;font-weight:800;letter-spacing:2px">SICCE</div>
+                  <div style="color:#f1f7ff;font-size:25px;font-weight:800;letter-spacing:-.7px">Studio</div>
+                  <div style="color:#8fa3c0;font-size:12px;margin-top:4px">Water movement control</div>
+                </div>
               </div>
             card_mod:
               style: |

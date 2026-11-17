@@ -5,6 +5,10 @@ Dashboard-Vorlage für einen Sicce-Controller. Sie liefert eine feste
 Seitenleiste, eine große Flow-Anzeige, Schnellaktionen und separate Ansichten
 für Steuerung und Telemetrie.
 
+Das Sicce-Studio-Logo wird automatisch im Kopf der Seitenleiste geladen. Es
+liegt außerdem als `logo.png` und `icon.png` im Repository vor und wird damit
+auch in HACS als Repository-Bild verwendet.
+
 ## Voraussetzungen
 
 Installiere in HACS unter **Frontend** diese Karten und lade danach den Browser

@@ -1,5 +1,7 @@
 # Sicce ContrAll for Home Assistant
 
+<img src="logo.png" alt="Sicce Studio" width="96" align="right">
+
 This custom component brings Sicce ContrAll cloud-connected devices into Home
 Assistant. It signs in using the same email address and password as ContrAll
 and uses production API locations found in ContrAll 2.33
