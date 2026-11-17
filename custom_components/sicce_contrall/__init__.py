@@ -32,6 +32,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinators[identifier] = coordinator
     entry.runtime_data = SicceRuntimeData(coordinators)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    from .panel import async_register_studio_panel
+    await async_register_studio_panel(hass)
     return True
 
 

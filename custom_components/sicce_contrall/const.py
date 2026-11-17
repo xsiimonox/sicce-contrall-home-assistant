@@ -2,6 +2,7 @@
 from datetime import timedelta
 
 DOMAIN = "sicce_contrall"
+INTEGRATION_VERSION = "0.3.0"
 CONF_EMAIL = "email"
 CONF_PASSWORD = "password"
 CONF_BASE_URL = "base_url"

@@ -24,6 +24,8 @@ and uses production API locations found in ContrAll 2.33
 - Robustes dynamisches Feld-Mapping für verschiedene Sicce-Produktfamilien
 - Sicherer Fallback auf die bestätigte Geräteantwort, wenn ein Controller
   keine separate Settings-Route anbietet
+- eigener **Sicce Studio**-Eintrag in der Home-Assistant-Seitenleiste mit
+  Pumpensteuerung und Statusübersicht
 
 ## Installation
 
@@ -47,6 +49,11 @@ Eine Vectra-Studio-inspirierte, dunkle Home-Assistant-Oberfläche mit
 Seitenmenü, großer Flow-Anzeige und Schnellaktionen ist als
 [Sicce Studio Dashboard](docs/DASHBOARD.md) enthalten.
 Es umfasst auch einen sicheren Pause-/Wiederanlauf-Timer.
+
+Ab Version 0.3.0 liefert die Integration außerdem das direkt integrierte
+[Sicce Studio Seitenleisten-Panel](docs/PANEL.md). Nach einem vollständigen
+Home-Assistant-Neustart erscheint es automatisch in der linken Seitenleiste;
+kein YAML-Import ist erforderlich.
 
 ## Entitäten
 
