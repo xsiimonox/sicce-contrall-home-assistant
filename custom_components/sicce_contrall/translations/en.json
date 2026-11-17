@@ -1,0 +1,12 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Sicce ContrAll",
+        "description": "Enter a Sicce ThingsCloud bearer token. The token is stored only in this Home Assistant config entry.",
+        "data": {"token": "API bearer token", "base_url": "Sicce API URL"}
+      }
+    },
+    "error": {"cannot_connect": "Cannot authenticate to Sicce ThingsCloud or no ContrAll device was found."}
+  }
+}

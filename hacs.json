@@ -1,0 +1,5 @@
+{
+  "name": "Sicce ContrAll",
+  "domains": ["sicce_contrall"],
+  "homeassistant": "2024.8.0"
+}

@@ -1,0 +1,10 @@
+{
+  "domain": "sicce_contrall",
+  "name": "Sicce ContrAll",
+  "codeowners": ["@xsiimonox"],
+  "config_flow": true,
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "requirements": ["aiohttp>=3.9.0"],
+  "version": "0.1.0"
+}
