@@ -100,17 +100,17 @@ views:
             template: studio_nav
             name: Pump control
             icon: mdi:tune-vertical
-            tap_action: { action: navigate, navigation_path: /dashboard-sicce/control }
+            tap_action: { action: navigate, navigation_path: /sicce-studio/control }
           - type: custom:button-card
             template: studio_nav
             name: Live data
             icon: mdi:chart-timeline-variant
-            tap_action: { action: navigate, navigation_path: /dashboard-sicce/live }
+            tap_action: { action: navigate, navigation_path: /sicce-studio/live }
           - type: custom:button-card
             template: studio_nav
             name: Settings
             icon: mdi:cog-outline
-            tap_action: { action: navigate, navigation_path: /dashboard-sicce/settings }
+            tap_action: { action: navigate, navigation_path: /sicce-studio/settings }
           - type: markdown
             content: |
               <div style="margin:20px 10px 6px;padding:15px;border-radius:16px;background:#14243b">

@@ -21,15 +21,46 @@ neu:
 
 ## Einrichten
 
-1. Öffne **Einstellungen → Dashboards → Dashboard hinzufügen** und wähle
-   **Neues Dashboard von Grund auf** mit dem Typ *YAML*.
-2. Kopiere den Inhalt von
-   [`dashboards/vectra_studio.yaml`](../dashboards/vectra_studio.yaml) in die
-   YAML-Konfiguration.
-3. Öffne **Entwicklerwerkzeuge → Zustände**, suche nach `sicce` und ersetze
+Die Integration legt aus Sicherheits- und Home-Assistant-Kompatibilitätsgründen
+kein Dashboard automatisch an. Du aktivierst es selbst mit einer der folgenden
+beiden Varianten.
+
+### Über die Home-Assistant-Oberfläche
+
+1. Installiere zuerst die vier Karten aus dem Abschnitt **Voraussetzungen**
+   über **HACS → Frontend**. Nach jeder Installation Browser neu laden.
+2. Öffne **Einstellungen → Dashboards → Dashboard hinzufügen**.
+3. Wähle **Neues Dashboard erstellen**, vergib den Namen *Sicce Studio* und
+   aktiviere **In Seitenleiste anzeigen**.
+4. Öffne anschließend dieses Dashboard, wähle oben rechts das Drei-Punkte-Menü
+   und dann **Raw configuration editor**. Kopiere den vollständigen Inhalt von
+   [`dashboards/vectra_studio.yaml`](../dashboards/vectra_studio.yaml) hinein.
+5. Speichern und Seite neu laden.
+
+### Als YAML-Dashboard in `configuration.yaml`
+
+Kopiere `dashboards/vectra_studio.yaml` nach
+`/config/dashboards/vectra_studio.yaml` auf deinem Home-Assistant-System und
+ergänze in `/config/configuration.yaml`:
+
+```yaml
+lovelace:
+  dashboards:
+    sicce-studio:
+      mode: yaml
+      title: Sicce Studio
+      icon: mdi:water-sync
+      show_in_sidebar: true
+      filename: dashboards/vectra_studio.yaml
+```
+
+Starte Home Assistant anschließend vollständig neu. Das Dashboard erscheint
+dann als **Sicce Studio** in der echten Home-Assistant-Seitenleiste.
+
+Öffne danach **Entwicklerwerkzeuge → Zustände**, suche nach `sicce` und ersetze
    alle Platzhalter wie `number.sicce_pump_pump_speed` durch die Entity-ID
    deiner Pumpe.
-4. Entferne jede Zeile, deren Entität dein Controller nicht anbietet. Das
+Entferne jede Zeile, deren Entität dein Controller nicht anbietet. Das
    betrifft je nach Modell zum Beispiel Eco, Pause-Geschwindigkeit, Modus,
    Temperatur oder Firmware.
 
@@ -53,10 +84,28 @@ verwendet dafür ausschließlich den Sicce-Pause-Befehl. Verwende ihn nicht als
 Sicherheitsabschaltung; für Wartung ist eine sichere Trennung vom Stromkreis
 erforderlich.
 
-Das Beispiel nennt die Views über `/dashboard-sicce/...`. Falls dein Dashboard
-einen anderen URL-Pfad hat, passe in den vier Navigationskarten den Abschnitt
-`navigation_path` an. Die untergeordneten Pfade bleiben `control`, `live` und
-`settings`.
+Die YAML-Variante verwendet den Dashboard-Pfad `/sicce-studio`. Falls du dem
+Dashboard in Home Assistant einen anderen URL-Pfad gibst, passe in den drei
+Navigationskarten den Abschnitt `navigation_path` an. Die untergeordneten
+Pfade bleiben `control`, `live` und `settings`.
+
+## Logo
+
+Das Logo im Studio-Dashboard wird standardmäßig von GitHub geladen. Wenn dein
+Home-Assistant-System keinen Zugriff auf `raw.githubusercontent.com` hat,
+kopiere [`logo.png`](../logo.png) nach `/config/www/sicce-studio-logo.png` und
+ersetze in der Dashboard-Vorlage die Bildadresse durch:
+
+```html
+<img src="/local/sicce-studio-logo.png" width="46" height="46" alt="Sicce Studio" />
+```
+
+Die `logo.png` im Repository wird von HACS als Repository-Bild verwendet.
+Damit das Logo außerdem im Kachel-Eintrag unter **Einstellungen → Geräte &
+Dienste** erscheint, muss es in das offizielle Projekt
+[`home-assistant/brands`](https://github.com/home-assistant/brands)
+aufgenommen werden. Eine Datei innerhalb einer Custom Integration kann diese
+Core-Oberfläche nicht selbst überschreiben.
 
 ## Entity-Beispiel
 
