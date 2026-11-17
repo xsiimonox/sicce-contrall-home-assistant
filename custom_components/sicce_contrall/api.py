@@ -4,11 +4,13 @@ from __future__ import annotations
 from collections.abc import Mapping
 import logging
 from typing import Any
+from urllib.parse import quote
 
 from aiohttp import ClientResponseError, ClientSession
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DEVICE_LIST_PATHS, LOGIN_PATH, PAUSE_PATH, SETTINGS_PATH
+from .pump import speed_command
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,16 +18,18 @@ _LOGGER = logging.getLogger(__name__)
 class SicceApiError(HomeAssistantError):
     """The ContrAll cloud rejected a request or returned an unexpected reply."""
 
+    def __init__(self, message: str, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
 
 class SicceClient:
-    """Authenticated client.  No password is retained by Home Assistant."""
+    """Authenticated client with an in-memory session token."""
 
     def __init__(self, session: ClientSession, base_url: str, token: str) -> None:
         self._session = session
         self._base_url = base_url.rstrip("/")
         self._token = token
-        self._details_path: str | None = None
-        self._details_unavailable = False
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -46,7 +50,7 @@ class SicceClient:
                 response.raise_for_status()
                 return await response.json(content_type=None)
         except ClientResponseError as err:
-            raise SicceApiError(f"Sicce API {method} {path}: HTTP {err.status}") from err
+            raise SicceApiError(f"Sicce API {method} {path}: HTTP {err.status}", err.status) from err
         except Exception as err:
             raise SicceApiError(f"Sicce API {method} {path}: {err}") from err
 
@@ -106,41 +110,25 @@ class SicceClient:
                 errors.append(str(err))
         raise SicceApiError("Could not list ContrAll devices. " + "; ".join(errors))
 
-    async def async_get_settings(self, device_id: str) -> dict[str, Any]:
-        """Read details without treating an absent optional route as fatal.
+    async def async_get_device(self, device_id: str) -> dict[str, Any]:
+        path = f"/devices/{quote(device_id, safe='')}"
+        reply = await self._request("GET", path)
+        if isinstance(reply, Mapping) and reply.get("result") is not False:
+            data = reply.get("data", reply)
+            if isinstance(data, dict) and data:
+                return data
+        raise SicceApiError("ContrAll did not return device details")
 
-        ContrAll accounts already return a device snapshot from the discovery
-        endpoint.  Some controller/API combinations do not expose the old
-        ``/v2/settings`` route at all (HTTP 404), so it must never prevent a
-        device from being set up in Home Assistant.
-        """
-        if not self._details_unavailable:
-            # A per-device REST resource is a common optional API shape.  Do
-            # not probe a list of undocumented paths: each failed request
-            # delays setup, and ``/v2/settings`` is known to be absent for at
-            # least one current controller/API combination.
-            paths = (self._details_path,) if self._details_path else (f"/devices/{device_id}",)
-            for path in paths:
-                if path is None:
-                    continue
-                try:
-                    reply = await self._request("GET", path, {"device_id": device_id})
-                except SicceApiError as err:
-                    if "HTTP 404" not in str(err):
-                        raise
-                    continue
-                if isinstance(reply, Mapping):
-                    self._details_path = path
-                    return dict(reply.get("data", reply))
-            self._details_unavailable = True
-
-        # The device list is confirmed to work during the config flow. Use its
-        # latest matching item as a safe read-only fallback.
-        for device in await self.async_get_devices():
-            for key in ("id", "device_id", "mac", "serial"):
-                if str(device.get(key)) == device_id:
-                    return device
-        raise SicceApiError(f"ContrAll device {device_id} is no longer in the account")
+    async def async_set_speed(self, device_id: str, device: dict[str, Any], percent: float) -> int:
+        try:
+            suffix, payload, target = speed_command(device, percent)
+        except ValueError as err:
+            raise SicceApiError(str(err)) from err
+        path = f"/devices/{quote(device_id, safe='')}{suffix}"
+        reply = await self._request("POST", path, payload)
+        if not isinstance(reply, Mapping) or reply.get("result") not in (True, 1):
+            raise SicceApiError("ContrAll did not confirm the pump command")
+        return target
 
     async def async_set_setting(self, device_id: str, key: str, value: Any) -> None:
         await self._request("POST", SETTINGS_PATH, {"device_id": device_id, key: value})
