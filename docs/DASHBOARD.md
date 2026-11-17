@@ -29,6 +29,26 @@ neu:
    betrifft je nach Modell zum Beispiel Eco, Pause-Geschwindigkeit, Modus,
    Temperatur oder Firmware.
 
+## Aus, Pause und Pausen-Timer
+
+Kopiere zusätzlich [`examples/sicce_pause_timer.yaml`](../examples/sicce_pause_timer.yaml)
+als Home-Assistant-Paket oder übernimm dessen Abschnitte `timer`, `script` und
+`automation` in die jeweiligen Konfigurationsdateien. Ersetze darin
+`switch.sicce_pump_pause` durch deine tatsächliche Pause-Entität.
+
+Danach stehen in Studio drei eindeutige Aktionen bereit:
+
+- **AUS / Stopp** aktiviert die von Sicce bestätigte Pause sofort und bleibt
+  aktiv, bis du **Weiter** drückst.
+- **Pause 15 min** pausiert die Pumpe und startet den Timer. Nach 15 Minuten
+  schaltet die Automation die Pumpe selbständig wieder ein.
+- **Weiter** bricht einen Timer ab und beendet die Pause sofort.
+
+„AUS / Stopp“ ist bewusst kein elektrischer Netzschalter. Die Integration
+verwendet dafür ausschließlich den Sicce-Pause-Befehl. Verwende ihn nicht als
+Sicherheitsabschaltung; für Wartung ist eine sichere Trennung vom Stromkreis
+erforderlich.
+
 Das Beispiel nennt die Views über `/dashboard-sicce/...`. Falls dein Dashboard
 einen anderen URL-Pfad hat, passe in den vier Navigationskarten den Abschnitt
 `navigation_path` an. Die untergeordneten Pfade bleiben `control`, `live` und

@@ -44,6 +44,7 @@ Ausführliche Hinweise: [Einrichtung](docs/SETUP.md),
 Eine Vectra-Studio-inspirierte, dunkle Home-Assistant-Oberfläche mit
 Seitenmenü, großer Flow-Anzeige und Schnellaktionen ist als
 [Sicce Studio Dashboard](docs/DASHBOARD.md) enthalten.
+Es umfasst auch einen sicheren Pause-/Wiederanlauf-Timer.
 
 ## Entitäten
 

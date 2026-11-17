@@ -3,7 +3,8 @@
 # A Vectra-Studio-inspired Lovelace dashboard for one Sicce device.
 # Required HACS frontend cards: button-card, Mushroom, layout-card, card-mod.
 # Replace every `*_sicce_pump` entity below with the entity ID from your
-# Home Assistant installation before adding this as a YAML dashboard.
+# Home Assistant installation before adding this as a YAML dashboard. Install
+# examples/sicce_pause_timer.yaml too, to enable the three pause controls.
 
 button_card_templates:
   studio_nav:
@@ -169,34 +170,44 @@ views:
             cards:
               - type: custom:button-card
                 template: studio_action
-                entity: switch.sicce_pump_pause
-                name: Feed pause
-                icon: mdi:fish
-                tap_action: { action: toggle }
-                state:
-                  - value: 'on'
-                    styles:
-                      card: [background: '#1e685d']
-              - type: custom:button-card
-                template: studio_action
-                entity: switch.sicce_pump_eco_mode
-                name: Eco mode
-                icon: mdi:leaf
-                tap_action: { action: toggle }
-                state:
-                  - value: 'on'
-                    styles:
-                      card: [background: '#1e685d']
-              - type: custom:button-card
-                template: studio_action
-                entity: button.sicce_pump_refresh
-                name: Refresh
-                icon: mdi:refresh
+                name: AUS / Stopp
+                icon: mdi:power
                 tap_action:
                   action: call-service
-                  service: button.press
+                  service: script.turn_on
+                  service_data: { entity_id: script.sicce_pump_stop }
+                  confirmation:
+                    text: Pumpe wirklich anhalten? Sie läuft erst nach „Weiter“ oder nach Ende einer Timer-Pause weiter.
+              - type: custom:button-card
+                template: studio_action
+                name: Pause 15 min
+                icon: mdi:timer-outline
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
+                  service_data: { entity_id: script.sicce_pump_pause_15_minutes }
+              - type: custom:button-card
+                template: studio_action
+                name: Weiter
+                icon: mdi:play
+                tap_action:
+                  action: call-service
+                  service: script.turn_on
                   service_data:
-                    entity_id: button.sicce_pump_refresh
+                    entity_id: script.sicce_pump_resume
+          - type: custom:mushroom-template-card
+            entity: timer.sicce_pump_pause
+            primary: Pause timer
+            secondary: >
+              {% if is_state('timer.sicce_pump_pause', 'active') %}
+                Läuft noch {{ state_attr('timer.sicce_pump_pause', 'remaining') }}
+              {% else %}
+                Keine aktive Pause
+              {% endif %}
+            icon: mdi:timer-sand
+            icon_color: >
+              {% if is_state('timer.sicce_pump_pause', 'active') %}amber{% else %}teal{% endif %}
+            tap_action: { action: more-info }
           - type: custom:mushroom-number-card
             entity: number.sicce_pump_pump_speed
             name: Pump speed
@@ -248,6 +259,7 @@ views:
           - entity: select.sicce_pump_mode
           - entity: switch.sicce_pump_eco_mode
           - entity: switch.sicce_pump_pause
+
 
   - title: Live data
     path: live

@@ -1,0 +1,62 @@
+# Sicce pause controls for the Sicce Studio dashboard.
+#
+# 1. Replace switch.sicce_pump_pause with your actual Sicce pause entity.
+# 2. Add this through a Home Assistant package, or copy timer/script/automation
+#    sections to their matching configuration files.
+# 3. Restart Home Assistant or reload scripts and automations.
+#
+# "Stop" intentionally invokes Sicce's confirmed pause endpoint. It is not an
+# electrical mains switch and has no claim to be a safety disconnect.
+
+timer:
+  sicce_pump_pause:
+    name: Sicce pump pause
+    icon: mdi:timer-sand
+    duration: "00:15:00"
+
+script:
+  sicce_pump_stop:
+    alias: Sicce pump stop
+    icon: mdi:power
+    sequence:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.sicce_pump_pause
+
+  sicce_pump_pause_15_minutes:
+    alias: Sicce pump pause for 15 minutes
+    icon: mdi:timer-outline
+    mode: restart
+    sequence:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.sicce_pump_pause
+      - action: timer.start
+        target:
+          entity_id: timer.sicce_pump_pause
+        data:
+          duration: "00:15:00"
+
+  sicce_pump_resume:
+    alias: Sicce pump resume
+    icon: mdi:play
+    sequence:
+      - action: timer.cancel
+        target:
+          entity_id: timer.sicce_pump_pause
+      - action: switch.turn_off
+        target:
+          entity_id: switch.sicce_pump_pause
+
+automation:
+  - id: sicce_pump_resume_after_pause_timer
+    alias: Sicce pump resume after pause timer
+    triggers:
+      - trigger: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.sicce_pump_pause
+    actions:
+      - action: switch.turn_off
+        target:
+          entity_id: switch.sicce_pump_pause
