@@ -20,6 +20,8 @@ and uses production API locations found in ContrAll 2.33
 - Modus-, Energie- und Halb-Leistungs-Steuerung, sofern unterstützt
 - Temperatur-, Status- und Firmware-Entitäten
 - Robustes dynamisches Feld-Mapping für verschiedene Sicce-Produktfamilien
+- Sicherer Fallback auf die bestätigte Geräteantwort, wenn ein Controller
+  keine separate Settings-Route anbietet
 
 ## Installation
 

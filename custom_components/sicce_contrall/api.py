@@ -24,6 +24,8 @@ class SicceClient:
         self._session = session
         self._base_url = base_url.rstrip("/")
         self._token = token
+        self._details_path: str | None = None
+        self._details_unavailable = False
 
     @property
     def _headers(self) -> dict[str, str]:
@@ -38,8 +40,9 @@ class SicceClient:
     ) -> Any:
         try:
             headers = self._headers if authenticate else {"Content-Type": "application/json", "Accept": "application/json"}
+            request_kwargs = {"params": payload} if method == "GET" else {"json": payload}
             async with self._session.request(method, f"{self._base_url}{path}", headers=headers,
-                                             json=payload, timeout=20) as response:
+                                             timeout=20, **request_kwargs) as response:
                 response.raise_for_status()
                 return await response.json(content_type=None)
         except ClientResponseError as err:
@@ -104,10 +107,40 @@ class SicceClient:
         raise SicceApiError("Could not list ContrAll devices. " + "; ".join(errors))
 
     async def async_get_settings(self, device_id: str) -> dict[str, Any]:
-        reply = await self._request("GET", SETTINGS_PATH, {"device_id": device_id})
-        if not isinstance(reply, Mapping):
-            raise SicceApiError("Sicce settings response is not an object")
-        return dict(reply.get("data", reply))
+        """Read details without treating an absent optional route as fatal.
+
+        ContrAll accounts already return a device snapshot from the discovery
+        endpoint.  Some controller/API combinations do not expose the old
+        ``/v2/settings`` route at all (HTTP 404), so it must never prevent a
+        device from being set up in Home Assistant.
+        """
+        if not self._details_unavailable:
+            # A per-device REST resource is a common optional API shape.  Do
+            # not probe a list of undocumented paths: each failed request
+            # delays setup, and ``/v2/settings`` is known to be absent for at
+            # least one current controller/API combination.
+            paths = (self._details_path,) if self._details_path else (f"/devices/{device_id}",)
+            for path in paths:
+                if path is None:
+                    continue
+                try:
+                    reply = await self._request("GET", path, {"device_id": device_id})
+                except SicceApiError as err:
+                    if "HTTP 404" not in str(err):
+                        raise
+                    continue
+                if isinstance(reply, Mapping):
+                    self._details_path = path
+                    return dict(reply.get("data", reply))
+            self._details_unavailable = True
+
+        # The device list is confirmed to work during the config flow. Use its
+        # latest matching item as a safe read-only fallback.
+        for device in await self.async_get_devices():
+            for key in ("id", "device_id", "mac", "serial"):
+                if str(device.get(key)) == device_id:
+                    return device
+        raise SicceApiError(f"ContrAll device {device_id} is no longer in the account")
 
     async def async_set_setting(self, device_id: str, key: str, value: Any) -> None:
         await self._request("POST", SETTINGS_PATH, {"device_id": device_id, key: value})
