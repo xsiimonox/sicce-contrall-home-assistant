@@ -1,0 +1,274 @@
+# Sicce Studio
+#
+# A Vectra-Studio-inspired Lovelace dashboard for one Sicce device.
+# Required HACS frontend cards: button-card, Mushroom, layout-card, card-mod.
+# Replace every `*_sicce_pump` entity below with the entity ID from your
+# Home Assistant installation before adding this as a YAML dashboard.
+
+button_card_templates:
+  studio_nav:
+    show_icon: true
+    show_name: true
+    styles:
+      card:
+        - height: 48px
+        - padding: 0 14px
+        - border-radius: 14px
+        - background: transparent
+        - box-shadow: none
+        - color: '#9aabc5'
+      grid:
+        - grid-template-areas: "i n"
+        - grid-template-columns: 28px 1fr
+        - grid-template-rows: 1fr
+      icon:
+        - width: 20px
+      name:
+        - justify-self: start
+        - font-size: 14px
+        - font-weight: 600
+    state:
+      - value: 'on'
+        styles:
+          card:
+            - background: 'linear-gradient(90deg, rgba(44, 214, 184, .20), rgba(44, 214, 184, .03))'
+            - color: '#eafcf9'
+          icon:
+            - color: '#2cd6b8'
+  studio_action:
+    show_icon: true
+    show_name: true
+    styles:
+      card:
+        - height: 80px
+        - padding: 12px
+        - border-radius: 16px
+        - background: '#14243b'
+        - box-shadow: none
+      grid:
+        - grid-template-areas: '"i" "n"'
+        - grid-template-columns: 1fr
+        - grid-template-rows: 40px 22px
+      icon:
+        - color: '#6ee7d1'
+        - width: 25px
+      name:
+        - font-size: 12px
+        - font-weight: 700
+
+title: Sicce Studio
+views:
+  - title: Studio
+    path: sicce-studio
+    icon: mdi:chart-donut-variant
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: 258px minmax(0, 1fr)
+      grid-template-rows: auto
+      grid-template-areas: 'sidebar main'
+      mediaquery:
+        '(max-width: 800px)':
+          grid-template-columns: 1fr
+          grid-template-areas: "'sidebar' 'main'"
+    cards:
+      - type: vertical-stack
+        view_layout:
+          grid-area: sidebar
+        cards:
+          - type: markdown
+            content: |
+              <div style="padding: 14px 10px 20px">
+                <div style="color:#2cd6b8;font-size:11px;font-weight:800;letter-spacing:2px">SICCE</div>
+                <div style="color:#f1f7ff;font-size:25px;font-weight:800;letter-spacing:-.7px">Studio</div>
+                <div style="color:#8fa3c0;font-size:12px;margin-top:4px">Water movement control</div>
+              </div>
+            card_mod:
+              style: |
+                ha-card { background: #0c1729; box-shadow: none; border: 0; }
+          - type: custom:button-card
+            template: studio_nav
+            name: Overview
+            icon: mdi:chart-donut-variant
+            state:
+              - value: 'on'
+                styles:
+                  card: [background: 'linear-gradient(90deg, rgba(44, 214, 184, .20), rgba(44, 214, 184, .03))']
+          - type: custom:button-card
+            template: studio_nav
+            name: Pump control
+            icon: mdi:tune-vertical
+            tap_action: { action: navigate, navigation_path: /dashboard-sicce/control }
+          - type: custom:button-card
+            template: studio_nav
+            name: Live data
+            icon: mdi:chart-timeline-variant
+            tap_action: { action: navigate, navigation_path: /dashboard-sicce/live }
+          - type: custom:button-card
+            template: studio_nav
+            name: Settings
+            icon: mdi:cog-outline
+            tap_action: { action: navigate, navigation_path: /dashboard-sicce/settings }
+          - type: markdown
+            content: |
+              <div style="margin:20px 10px 6px;padding:15px;border-radius:16px;background:#14243b">
+                <div style="color:#8fa3c0;font-size:11px;font-weight:700;letter-spacing:1px">PUMP STATUS</div>
+                <div style="color:#f1f7ff;font-size:15px;font-weight:700;margin-top:8px">{{ states('sensor.sicce_pump_status') | default('Online', true) }}</div>
+              </div>
+            card_mod:
+              style: |
+                ha-card { background: #0c1729; box-shadow: none; border: 0; }
+      - type: vertical-stack
+        view_layout:
+          grid-area: main
+        cards:
+          - type: markdown
+            content: |
+              <div style="padding:10px 6px 18px">
+                <div style="color:#8fa3c0;font-size:13px">YOUR AQUARIUM</div>
+                <div style="color:#f1f7ff;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.8px">Pump overview</div>
+              </div>
+            card_mod:
+              style: |
+                ha-card { background: #0c1729; box-shadow: none; border: 0; }
+          - type: custom:button-card
+            entity: number.sicce_pump_pump_speed
+            name: Flow intensity
+            icon: mdi:water-sync
+            show_state: true
+            state_display: |
+              [[[ return entity.state + ' %'; ]]]
+            styles:
+              card:
+                - height: 238px
+                - border-radius: 24px
+                - padding: 25px
+                - background: 'radial-gradient(circle at 78% 22%, #28667b 0, #142c48 32%, #101d33 75%)'
+                - box-shadow: none
+              grid:
+                - grid-template-areas: '"i n" "i s"'
+                - grid-template-columns: 1fr 1fr
+                - grid-template-rows: 1fr 1fr
+              icon:
+                - width: 105px
+                - color: '#6ee7d1'
+              name:
+                - align-self: end
+                - justify-self: end
+                - color: '#b7cadf'
+                - font-size: 14px
+                - font-weight: 700
+              state:
+                - align-self: start
+                - justify-self: end
+                - color: '#ffffff'
+                - font-size: 55px
+                - font-weight: 800
+            tap_action: { action: more-info }
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:button-card
+                template: studio_action
+                entity: switch.sicce_pump_pause
+                name: Feed pause
+                icon: mdi:fish
+                tap_action: { action: toggle }
+                state:
+                  - value: 'on'
+                    styles:
+                      card: [background: '#1e685d']
+              - type: custom:button-card
+                template: studio_action
+                entity: switch.sicce_pump_eco_mode
+                name: Eco mode
+                icon: mdi:leaf
+                tap_action: { action: toggle }
+                state:
+                  - value: 'on'
+                    styles:
+                      card: [background: '#1e685d']
+              - type: custom:button-card
+                template: studio_action
+                entity: button.sicce_pump_refresh
+                name: Refresh
+                icon: mdi:refresh
+                tap_action: { action: perform-action, perform_action: button.press, target: { entity_id: button.sicce_pump_refresh } }
+          - type: custom:mushroom-number-card
+            entity: number.sicce_pump_pump_speed
+            name: Pump speed
+            icon: mdi:water-percent
+            display_mode: slider
+            fill_container: true
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: custom:mushroom-entity-card
+                entity: sensor.sicce_pump_water_temperature
+                name: Water temperature
+                icon: mdi:thermometer-water
+              - type: custom:mushroom-entity-card
+                entity: sensor.sicce_pump_status
+                name: Controller
+                icon: mdi:router-wireless
+          - type: conditional
+            conditions:
+              - entity: select.sicce_pump_mode
+                state_not: unavailable
+            card:
+              type: entities
+              title: Flow programme
+              entities:
+                - entity: select.sicce_pump_mode
+                  name: Operating mode
+        card_mod:
+          style: |
+            ha-card { background: #0c1729; }
+
+  - title: Control
+    path: control
+    icon: mdi:tune-vertical
+    cards:
+      - type: custom:mushroom-number-card
+        entity: number.sicce_pump_pump_speed
+        name: Pump speed
+        icon: mdi:water-percent
+        display_mode: slider
+        fill_container: true
+      - type: entities
+        title: Fine control
+        entities:
+          - entity: number.sicce_pump_pump_speed
+          - entity: number.sicce_pump_eco_speed
+          - entity: number.sicce_pump_pause_speed
+          - entity: select.sicce_pump_mode
+          - entity: switch.sicce_pump_eco_mode
+          - entity: switch.sicce_pump_pause
+
+  - title: Live data
+    path: live
+    icon: mdi:chart-timeline-variant
+    cards:
+      - type: history-graph
+        title: Water temperature
+        hours_to_show: 24
+        entities:
+          - entity: sensor.sicce_pump_water_temperature
+      - type: entities
+        title: Controller data
+        entities:
+          - entity: sensor.sicce_pump_status
+          - entity: sensor.sicce_pump_firmware
+
+  - title: Settings
+    path: settings
+    icon: mdi:cog-outline
+    cards:
+      - type: entities
+        title: Sicce controller
+        show_header_toggle: false
+        entities:
+          - entity: button.sicce_pump_refresh
+            name: Reload device data
+          - entity: sensor.sicce_pump_firmware

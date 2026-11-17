@@ -39,6 +39,12 @@ Ausführliche Hinweise: [Einrichtung](docs/SETUP.md),
 [Architektur](docs/ARCHITECTURE.md) und
 [Protokollstand](docs/PROTOCOL_RESEARCH.md).
 
+## Sicce Studio Dashboard
+
+Eine Vectra-Studio-inspirierte, dunkle Home-Assistant-Oberfläche mit
+Seitenmenü, großer Flow-Anzeige und Schnellaktionen ist als
+[Sicce Studio Dashboard](docs/DASHBOARD.md) enthalten.
+
 ## Entitäten
 
 The component discovers fields returned by each controller, so it works across
