@@ -1,7 +1,6 @@
 """Sicce ContrAll integration."""
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass
 
 from homeassistant.config_entries import ConfigEntry
@@ -9,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import SicceClient
-from .const import CONF_BASE_URL, CONF_TOKEN, DOMAIN, PLATFORMS
+from .const import CONF_BASE_URL, CONF_EMAIL, CONF_PASSWORD, DOMAIN, PLATFORMS
 from .coordinator import SicceCoordinator, device_id
 
 
@@ -19,7 +18,9 @@ class SicceRuntimeData:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    client = SicceClient(async_get_clientsession(hass), entry.data[CONF_BASE_URL], entry.data[CONF_TOKEN])
+    client = await SicceClient.async_login(
+        async_get_clientsession(hass), entry.data[CONF_BASE_URL], entry.data[CONF_EMAIL], entry.data[CONF_PASSWORD],
+    )
     devices = await client.async_get_devices()
     coordinators: dict[str, SicceCoordinator] = {}
     for device in devices:

@@ -13,3 +13,9 @@ def test_device_id_prefers_the_cloud_id():
     assert device_id({"id": 3, "mac": "aa:bb"}) == "3"
     assert device_id({"device_id": "controller-1"}) == "controller-1"
     assert device_id({"name": "unnamed"}) is None
+
+
+def test_login_token_can_be_nested_or_flat():
+    assert SicceClient._token_from_login({"token": "flat"}) == "flat"
+    assert SicceClient._token_from_login({"result": True, "data": {"access_token": "nested"}}) == "nested"
+    assert SicceClient._token_from_login({"result": False, "error": "INVALID_USER_OR_PASSWORD"}) is None

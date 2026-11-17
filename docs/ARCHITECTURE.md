@@ -3,7 +3,7 @@
 ```text
 Home Assistant
   └─ Sicce ContrAll Custom Component
-       ├─ Config Flow: API-URL + Bearer-Token
+       ├─ Config Flow: Sicce-E-Mail + Passwort
        ├─ SicceClient: ThingsCloud-HTTP-Anfragen
        └─ pro Gerät ein DataUpdateCoordinator (30 Sekunden)
             ├─ Sensoren: Temperatur, Status, Firmware

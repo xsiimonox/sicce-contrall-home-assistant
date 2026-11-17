@@ -3,10 +3,10 @@
     "step": {
       "user": {
         "title": "Sicce ContrAll verbinden",
-        "description": "Gib einen Sicce-ThingsCloud-Bearer-Token ein. Der Token wird ausschließlich in diesem Home-Assistant-Config-Entry abgelegt.",
-        "data": {"token": "API-Bearer-Token", "base_url": "Sicce-API-URL"}
+        "description": "Melde dich mit der E-Mail-Adresse und dem Passwort deiner Sicce-ContrAll-App an.",
+        "data": {"email": "E-Mail-Adresse", "password": "Passwort", "base_url": "Sicce-API-URL"}
       }
     },
-    "error": {"cannot_connect": "Anmeldung bei Sicce ThingsCloud fehlgeschlagen oder kein ContrAll-Gerät gefunden."}
+    "error": {"cannot_connect": "Anmeldung bei Sicce ContrAll fehlgeschlagen oder kein ContrAll-Gerät gefunden."}
   }
 }

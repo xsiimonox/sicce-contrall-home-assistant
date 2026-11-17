@@ -5,7 +5,7 @@
 - Home Assistant 2024.8 oder neuer
 - Ein Sicce-Gerät, das in der ContrAll-App unter demselben ThingsCloud-Konto
   sichtbar und online ist
-- Ein ThingsCloud-Bearer-Token
+- Die E-Mail-Adresse und das Passwort deines ContrAll-Kontos
 
 ## Installation über HACS
 
@@ -15,7 +15,7 @@
    Assistant neu.
 4. Öffne **Einstellungen → Geräte & Dienste → Integration hinzufügen** und
    wähle **Sicce ContrAll**.
-5. Trage den Bearer-Token ein. Die Standard-API-URL muss normalerweise nicht
+5. Trage E-Mail-Adresse und Passwort deines ContrAll-Kontos ein. Die Standard-API-URL muss normalerweise nicht
    geändert werden.
 
 ## Manuelle Installation
@@ -24,22 +24,19 @@ Kopiere den Ordner `custom_components/sicce_contrall` nach
 `/config/custom_components/` deiner Home-Assistant-Installation und starte
 Home Assistant neu.
 
-## Token-Hinweise
+## Zugangsdaten-Hinweise
 
-ContrAll stellt derzeit keine dokumentierte, stabile OAuth- oder Passwort-API
-bereit. Deshalb fragt die Integration bewusst nach einem bereits vorhandenen
-Bearer-Token, anstatt Zugangsdaten zu speichern oder Login-Anfragen zu raten.
-
-Ein Token berechtigt wie eine angemeldete ContrAll-Sitzung. Behandle ihn wie
-ein Passwort, teile ihn nicht in Issues und sichere Home-Assistant-Backups
-angemessen. Wenn Sicce den Token widerruft oder er abläuft, lege den Eintrag
-neu an.
+Die Integration nutzt den in ContrAll 2.33 nachgewiesenen mobilen Login unter
+`/mobile/login`. Das Passwort wird nicht protokolliert. Behandle
+Home-Assistant-Backups dennoch wie vertrauliche Daten, da Config-Entries
+Zugangsdaten enthalten.
 
 ## Fehlersuche
 
 - **Keine Geräte gefunden:** Prüfe, ob die Pumpe in ContrAll online ist und
   der Token zum gleichen Konto gehört.
-- **401/403:** Token ist ungültig, abgelaufen oder besitzt keine Berechtigung.
+- **Anmeldung fehlgeschlagen:** Prüfe E-Mail-Adresse und Passwort zunächst in
+  der ContrAll-App.
 - **Entität fehlt:** Die Integration zeigt Steuerungen nur an, wenn der
   jeweilige Controller das zugehörige Feld in seiner Antwort liefert.
 - **Gerät nicht verfügbar:** Prüfe die Internetverbindung des Controllers und
